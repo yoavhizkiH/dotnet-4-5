@@ -1,6 +1,3 @@
-// Minimal stub to allow project to build
-// This file will be replaced in Task 2 with the actual migrated Program.cs
-
 using System;
 
 namespace SimpleApp
@@ -9,7 +6,22 @@ namespace SimpleApp
     {
         static void Main(string[] args)
         {
-            // Placeholder - actual implementation will be added in next task
+            Console.WriteLine("Welcome to SimpleApp!");
+            Console.WriteLine("======================");
+
+            Calculator calc = new Calculator();
+
+            int a = 10;
+            int b = 5;
+
+            Console.WriteLine($"\nCalculating with numbers: {a} and {b}");
+            Console.WriteLine($"Addition: {calc.Add(a, b)}");
+            Console.WriteLine($"Subtraction: {calc.Subtract(a, b)}");
+            Console.WriteLine($"Multiplication: {calc.Multiply(a, b)}");
+            Console.WriteLine($"Division: {calc.Divide(a, b)}");
+
+            Console.WriteLine("\nPress any key to exit...");
+            Console.ReadKey();
         }
     }
 }
