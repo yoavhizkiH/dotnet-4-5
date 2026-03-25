@@ -9,7 +9,7 @@ This script supports two modes:
 1. SRC Validation: Tests commands and captures outputs (no expected_stdout/stderr)
 2. DST Contract Validation: Tests commands and validates outputs match expected
 
-Generated at: 2026-03-25T21:35:32.954546+00:00
+Generated at: 2026-03-25T21:37:36.108470+00:00
 Project: dotnet-4-5
 Milestone: 1
 """
