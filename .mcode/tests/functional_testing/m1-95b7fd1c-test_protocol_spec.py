@@ -9,7 +9,7 @@ This script supports two modes:
 1. SRC Validation: Tests commands and captures outputs (no expected_stdout/stderr)
 2. DST Contract Validation: Tests commands and validates outputs match expected
 
-Generated at: 2026-03-25T21:28:45.403244+00:00
+Generated at: 2026-03-25T21:33:09.765108+00:00
 Project: dotnet-4-5
 Milestone: 1
 """
@@ -55,7 +55,7 @@ TEST_CASES = resolve_env_placeholders(json.loads(r'''[
         "name": "test_happy_path_default_run",
         "category": "HAPPY_PATH",
         "description": "Running simpleapp with no arguments produces the expected calculator output with a=10 and b=5",
-        "command": "python",
+        "command": ".venv/bin/python",
         "subcommand": "",
         "args": [
             "-m",
@@ -70,7 +70,7 @@ TEST_CASES = resolve_env_placeholders(json.loads(r'''[
         "name": "test_happy_path_banner_line",
         "category": "HAPPY_PATH",
         "description": "Output includes the banner separator line matching the original .NET output",
-        "command": "python",
+        "command": ".venv/bin/python",
         "subcommand": "",
         "args": [
             "-m",
@@ -85,7 +85,7 @@ TEST_CASES = resolve_env_placeholders(json.loads(r'''[
         "name": "test_happy_path_addition",
         "category": "HAPPY_PATH",
         "description": "Output includes correct addition result: 10 + 5 = 15",
-        "command": "python",
+        "command": ".venv/bin/python",
         "subcommand": "",
         "args": [
             "-m",
@@ -100,7 +100,7 @@ TEST_CASES = resolve_env_placeholders(json.loads(r'''[
         "name": "test_happy_path_subtraction",
         "category": "HAPPY_PATH",
         "description": "Output includes correct subtraction result: 10 - 5 = 5",
-        "command": "python",
+        "command": ".venv/bin/python",
         "subcommand": "",
         "args": [
             "-m",
@@ -115,7 +115,7 @@ TEST_CASES = resolve_env_placeholders(json.loads(r'''[
         "name": "test_happy_path_multiplication",
         "category": "HAPPY_PATH",
         "description": "Output includes correct multiplication result: 10 * 5 = 50",
-        "command": "python",
+        "command": ".venv/bin/python",
         "subcommand": "",
         "args": [
             "-m",
@@ -130,7 +130,7 @@ TEST_CASES = resolve_env_placeholders(json.loads(r'''[
         "name": "test_happy_path_division",
         "category": "HAPPY_PATH",
         "description": "Output includes correct division result: 10 / 5 = 2.0",
-        "command": "python",
+        "command": ".venv/bin/python",
         "subcommand": "",
         "args": [
             "-m",
@@ -145,7 +145,7 @@ TEST_CASES = resolve_env_placeholders(json.loads(r'''[
         "name": "test_happy_path_calculating_line",
         "category": "HAPPY_PATH",
         "description": "Output includes the 'Calculating with numbers' line showing the operands",
-        "command": "python",
+        "command": ".venv/bin/python",
         "subcommand": "",
         "args": [
             "-m",
@@ -160,7 +160,7 @@ TEST_CASES = resolve_env_placeholders(json.loads(r'''[
         "name": "test_no_pause_prompt",
         "category": "HAPPY_PATH",
         "description": "Python version omits the 'Press any key to exit' pause that was in the .NET original",
-        "command": "python",
+        "command": ".venv/bin/python",
         "subcommand": "",
         "args": [
             "-m",
@@ -174,7 +174,7 @@ TEST_CASES = resolve_env_placeholders(json.loads(r'''[
 ]'''))
 
 # CLI binary/entry point
-CLI_COMMAND = "echo """
+CLI_COMMAND = ".venv/bin/python -m simpleapp"
 
 # Working directory for CLI execution
 WORKING_DIR = "."
