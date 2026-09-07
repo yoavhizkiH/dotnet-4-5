@@ -9,7 +9,6 @@ Validates that:
 """
 import os
 import subprocess
-import pytest
 
 WORKSPACE_DIR = os.environ.get("WORKSPACE_DIR", "/l2l/workspace")
 REPO_DIR = os.path.join(WORKSPACE_DIR, "dotnet-4-5")
@@ -27,28 +26,32 @@ def get_csc_tool_path():
     return None
 
 
+def run_msbuild(csproj_path):
+    """Invoke MSBuild on csproj_path (relative to REPO_DIR) and return the result."""
+    csc_path = get_csc_tool_path()
+    assert csc_path is not None, "Microsoft.Net.Compilers tools directory not found"
+    return subprocess.run(
+        [
+            MSBUILD,
+            csproj_path,
+            "/p:Configuration=Debug",
+            f"/p:CscToolPath={csc_path}",
+            "/t:Build",
+            "/verbosity:minimal",
+        ],
+        cwd=REPO_DIR,
+        capture_output=True,
+        text=True,
+        timeout=120,
+    )
+
+
 class TestSourceProjectBuild:
     """Verify SimpleApp.csproj builds to produce SimpleApp.exe."""
 
     def test_source_project_builds_successfully(self):
         """MSBuild compiles SimpleApp.csproj without errors."""
-        csc_path = get_csc_tool_path()
-        assert csc_path is not None, "Microsoft.Net.Compilers tools directory not found"
-
-        result = subprocess.run(
-            [
-                MSBUILD,
-                "SimpleApp.csproj",
-                "/p:Configuration=Debug",
-                f"/p:CscToolPath={csc_path}",
-                "/t:Build",
-                "/verbosity:minimal",
-            ],
-            cwd=REPO_DIR,
-            capture_output=True,
-            text=True,
-            timeout=120,
-        )
+        result = run_msbuild("SimpleApp.csproj")
         assert result.returncode == 0, f"Build failed:\nstdout: {result.stdout}\nstderr: {result.stderr}"
 
     def test_source_exe_artifact_exists(self):
@@ -69,23 +72,7 @@ class TestTestProjectBuild:
 
     def test_test_project_builds_successfully(self):
         """MSBuild compiles SimpleApp.Tests.csproj without errors."""
-        csc_path = get_csc_tool_path()
-        assert csc_path is not None, "Microsoft.Net.Compilers tools directory not found"
-
-        result = subprocess.run(
-            [
-                MSBUILD,
-                os.path.join("SimpleApp.Tests", "SimpleApp.Tests.csproj"),
-                "/p:Configuration=Debug",
-                f"/p:CscToolPath={csc_path}",
-                "/t:Build",
-                "/verbosity:minimal",
-            ],
-            cwd=REPO_DIR,
-            capture_output=True,
-            text=True,
-            timeout=120,
-        )
+        result = run_msbuild(os.path.join("SimpleApp.Tests", "SimpleApp.Tests.csproj"))
         assert result.returncode == 0, f"Build failed:\nstdout: {result.stdout}\nstderr: {result.stderr}"
 
     def test_test_dll_artifact_exists(self):
