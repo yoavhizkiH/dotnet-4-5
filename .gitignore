@@ -1,0 +1,36 @@
+# Build output
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+
+# NuGet packages
+packages/
+*.nupkg
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userprefs
+
+# NUnit test results and agent logs
+TestResult.xml
+nunit-agent_*.log
+
+# NuGet CLI config
+NuGet/
+
+# pip cache
+pip/
+
+# Windows NUL device artifact
+NUL
+
+# Python testing artifacts (functional test environment)
+.venv/
+venv/
+__pycache__/
+.pytest_cache/
+*.pyc
+*.pyo
