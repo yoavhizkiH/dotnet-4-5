@@ -87,117 +87,42 @@ class TestNUnitOverallExecution:
         assert inconclusive == 0, f"Expected 0 inconclusive, got {inconclusive}"
 
 
-class TestNUnitFilteredExecution:
-    """Verify specific test categories run and pass via NUnit filter."""
+def _run_filtered(where_filter):
+    """Run nunit3-console with a --where filter and return the CompletedProcess."""
+    return subprocess.run(
+        [NUNIT_CONSOLE, TEST_DLL, "--noresult", "--where", where_filter],
+        cwd=REPO_DIR,
+        capture_output=True,
+        text=True,
+        timeout=60,
+    )
 
-    def test_add_tests_pass(self):
-        """Add operation tests pass when filtered by name."""
-        result = subprocess.run(
-            [NUNIT_CONSOLE, TEST_DLL, "--noresult", "--where", "method =~ /Add/"],
-            cwd=REPO_DIR,
-            capture_output=True,
-            text=True,
-            timeout=60,
-        )
-        assert result.returncode == 0, (
-            f"Add tests failed (exit {result.returncode}):\n{result.stdout}\n{result.stderr}"
-        )
-        assert "Overall result: Passed" in result.stdout
 
-    def test_subtract_tests_pass(self):
-        """Subtract operation tests pass when filtered by name."""
-        result = subprocess.run(
-            [NUNIT_CONSOLE, TEST_DLL, "--noresult", "--where", "method =~ /Subtract/"],
-            cwd=REPO_DIR,
-            capture_output=True,
-            text=True,
-            timeout=60,
-        )
-        assert result.returncode == 0, (
-            f"Subtract tests failed (exit {result.returncode}):\n{result.stdout}\n{result.stderr}"
-        )
-        assert "Overall result: Passed" in result.stdout
+@pytest.mark.parametrize("where_filter,operation", [
+    ("method =~ /Add/", "Add"),
+    ("method =~ /Subtract/", "Subtract"),
+    ("method =~ /Multiply/", "Multiply"),
+    ("method =~ /Divide/", "Divide"),
+])
+def test_filtered_run_passes(where_filter, operation):
+    """Filtered nunit3-console run exits 0 and shows Overall result: Passed."""
+    result = _run_filtered(where_filter)
+    assert result.returncode == 0, (
+        f"{operation} tests failed (exit {result.returncode}):\n{result.stdout}\n{result.stderr}"
+    )
+    assert "Overall result: Passed" in result.stdout
 
-    def test_multiply_tests_pass(self):
-        """Multiply operation tests pass when filtered by name."""
-        result = subprocess.run(
-            [NUNIT_CONSOLE, TEST_DLL, "--noresult", "--where", "method =~ /Multiply/"],
-            cwd=REPO_DIR,
-            capture_output=True,
-            text=True,
-            timeout=60,
-        )
-        assert result.returncode == 0, (
-            f"Multiply tests failed (exit {result.returncode}):\n{result.stdout}\n{result.stderr}"
-        )
-        assert "Overall result: Passed" in result.stdout
 
-    def test_divide_tests_pass(self):
-        """Divide operation tests pass when filtered by name."""
-        result = subprocess.run(
-            [NUNIT_CONSOLE, TEST_DLL, "--noresult", "--where", "method =~ /Divide/"],
-            cwd=REPO_DIR,
-            capture_output=True,
-            text=True,
-            timeout=60,
-        )
-        assert result.returncode == 0, (
-            f"Divide tests failed (exit {result.returncode}):\n{result.stdout}\n{result.stderr}"
-        )
-        assert "Overall result: Passed" in result.stdout
-
-    def test_add_test_count(self):
-        """Add operation has expected number of test cases (9: 7 basic + 2 overflow)."""
-        result = subprocess.run(
-            [NUNIT_CONSOLE, TEST_DLL, "--noresult", "--where", "method =~ /Add/"],
-            cwd=REPO_DIR,
-            capture_output=True,
-            text=True,
-            timeout=60,
-        )
-        match = re.search(r"Test Count:\s*(\d+)", result.stdout)
-        assert match is not None, f"Could not find test count in:\n{result.stdout}"
-        count = int(match.group(1))
-        assert count == 9, f"Expected 9 Add tests, got {count}"
-
-    def test_subtract_test_count(self):
-        """Subtract operation has expected number of test cases (9: 7 basic + 2 overflow)."""
-        result = subprocess.run(
-            [NUNIT_CONSOLE, TEST_DLL, "--noresult", "--where", "method =~ /Subtract/"],
-            cwd=REPO_DIR,
-            capture_output=True,
-            text=True,
-            timeout=60,
-        )
-        match = re.search(r"Test Count:\s*(\d+)", result.stdout)
-        assert match is not None, f"Could not find test count in:\n{result.stdout}"
-        count = int(match.group(1))
-        assert count == 9, f"Expected 9 Subtract tests, got {count}"
-
-    def test_multiply_test_count(self):
-        """Multiply operation has expected number of test cases (9: 7 basic + 2 overflow)."""
-        result = subprocess.run(
-            [NUNIT_CONSOLE, TEST_DLL, "--noresult", "--where", "method =~ /Multiply/"],
-            cwd=REPO_DIR,
-            capture_output=True,
-            text=True,
-            timeout=60,
-        )
-        match = re.search(r"Test Count:\s*(\d+)", result.stdout)
-        assert match is not None, f"Could not find test count in:\n{result.stdout}"
-        count = int(match.group(1))
-        assert count == 9, f"Expected 9 Multiply tests, got {count}"
-
-    def test_divide_test_count(self):
-        """Divide operation has expected number of test cases (15: 6 basic + 4 boundary + 1 repeating + 3 exception + 1 same-value)."""
-        result = subprocess.run(
-            [NUNIT_CONSOLE, TEST_DLL, "--noresult", "--where", "method =~ /Divide/"],
-            cwd=REPO_DIR,
-            capture_output=True,
-            text=True,
-            timeout=60,
-        )
-        match = re.search(r"Test Count:\s*(\d+)", result.stdout)
-        assert match is not None, f"Could not find test count in:\n{result.stdout}"
-        count = int(match.group(1))
-        assert count == 15, f"Expected 15 Divide tests, got {count}"
+@pytest.mark.parametrize("where_filter,expected_count,operation", [
+    ("method =~ /Add/", 9, "Add"),
+    ("method =~ /Subtract/", 9, "Subtract"),
+    ("method =~ /Multiply/", 9, "Multiply"),
+    ("method =~ /Divide/", 15, "Divide"),
+])
+def test_filtered_test_count(where_filter, expected_count, operation):
+    """Filtered run reports the expected Test Count for the operation."""
+    result = _run_filtered(where_filter)
+    match = re.search(r"Test Count:\s*(\d+)", result.stdout)
+    assert match is not None, f"Could not find test count in:\n{result.stdout}"
+    count = int(match.group(1))
+    assert count == expected_count, f"Expected {expected_count} {operation} tests, got {count}"
