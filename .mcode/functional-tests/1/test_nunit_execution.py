@@ -3,7 +3,7 @@ Functional tests: Verify NUnit test runner executes all tests successfully.
 
 Validates that:
 - nunit3-console.exe can run the test assembly
-- All 37 test cases pass
+- All 42 test cases pass
 - No tests fail, are skipped, or are inconclusive
 - Test results contain expected categories (Add, Subtract, Multiply, Divide)
 """
@@ -49,19 +49,19 @@ class TestNUnitOverallExecution:
             f"Expected 'Overall result: Passed' in output:\n{nunit_result.stdout}"
         )
 
-    def test_total_test_count_is_37(self, nunit_result):
-        """Test Count is exactly 37."""
+    def test_total_test_count_is_42(self, nunit_result):
+        """Test Count is exactly 42."""
         match = re.search(r"Test Count:\s*(\d+)", nunit_result.stdout)
         assert match is not None, f"Could not find 'Test Count' in output:\n{nunit_result.stdout}"
         count = int(match.group(1))
-        assert count == 37, f"Expected 37 tests, found {count}"
+        assert count == 42, f"Expected 42 tests, found {count}"
 
     def test_all_tests_passed(self, nunit_result):
-        """Passed count equals total test count (37)."""
+        """Passed count equals total test count (42)."""
         match = re.search(r"Passed:\s*(\d+)", nunit_result.stdout)
         assert match is not None, f"Could not find 'Passed' count in output:\n{nunit_result.stdout}"
         passed = int(match.group(1))
-        assert passed == 37, f"Expected 37 passed, got {passed}"
+        assert passed == 42, f"Expected 42 passed, got {passed}"
 
     def test_zero_failures(self, nunit_result):
         """No test failures."""
@@ -175,7 +175,7 @@ class TestNUnitFilteredExecution:
         assert count == 9, f"Expected 9 Subtract tests, got {count}"
 
     def test_multiply_test_count(self):
-        """Multiply operation has expected number of test cases (8: 6 basic + 2 overflow)."""
+        """Multiply operation has expected number of test cases (9: 7 basic + 2 overflow)."""
         result = subprocess.run(
             [NUNIT_CONSOLE, TEST_DLL, "--noresult", "--where", "method =~ /Multiply/"],
             cwd=REPO_DIR,
@@ -186,10 +186,10 @@ class TestNUnitFilteredExecution:
         match = re.search(r"Test Count:\s*(\d+)", result.stdout)
         assert match is not None, f"Could not find test count in:\n{result.stdout}"
         count = int(match.group(1))
-        assert count == 8, f"Expected 8 Multiply tests, got {count}"
+        assert count == 9, f"Expected 9 Multiply tests, got {count}"
 
     def test_divide_test_count(self):
-        """Divide operation has expected number of test cases (11: 6 basic + 1 repeating + 3 exception + 1 same-value)."""
+        """Divide operation has expected number of test cases (15: 6 basic + 4 boundary + 1 repeating + 3 exception + 1 same-value)."""
         result = subprocess.run(
             [NUNIT_CONSOLE, TEST_DLL, "--noresult", "--where", "method =~ /Divide/"],
             cwd=REPO_DIR,
@@ -200,4 +200,4 @@ class TestNUnitFilteredExecution:
         match = re.search(r"Test Count:\s*(\d+)", result.stdout)
         assert match is not None, f"Could not find test count in:\n{result.stdout}"
         count = int(match.group(1))
-        assert count == 11, f"Expected 11 Divide tests, got {count}"
+        assert count == 15, f"Expected 15 Divide tests, got {count}"

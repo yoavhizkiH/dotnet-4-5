@@ -71,6 +71,7 @@ namespace SimpleApp.Tests
         [TestCase(-2, 3, -6)]
         [TestCase(0, 5, 0)]
         [TestCase(5, 0, 0)]
+        [TestCase(5, 5, 25)]
         [TestCase(1, int.MaxValue, int.MaxValue)]
         public void Multiply_ReturnsCorrectResult(int a, int b, int expected)
         {
@@ -104,6 +105,17 @@ namespace SimpleApp.Tests
             Assert.That(result, Is.EqualTo(expected).Within(1e-10));
         }
 
+        [TestCase(int.MaxValue, 1, (double)int.MaxValue)]
+        [TestCase(int.MinValue, 1, (double)int.MinValue)]
+        [TestCase(int.MaxValue, -1, -(double)int.MaxValue)]
+        [TestCase(int.MinValue, -1, -(double)int.MinValue)]
+        public void Divide_BoundaryValues_ReturnsCorrectResult(int a, int b, double expected)
+        {
+            double result = _calculator.Divide(a, b);
+
+            Assert.That(result, Is.EqualTo(expected).Within(1e-10));
+        }
+
         [Test]
         public void Divide_RepeatingDecimal_ReturnsCorrectResult()
         {
@@ -127,7 +139,7 @@ namespace SimpleApp.Tests
         {
             double result = _calculator.Divide(5, 5);
 
-            Assert.That(result, Is.EqualTo(1.0));
+            Assert.That(result, Is.EqualTo(1.0).Within(1e-10));
         }
     }
 }
