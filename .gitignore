@@ -14,8 +14,18 @@ packages/
 *.suo
 *.userprefs
 
-# NUnit test results
+# NUnit test results and agent logs
 TestResult.xml
+nunit-agent_*.log
+
+# NuGet CLI config
+NuGet/
+
+# pip cache
+pip/
+
+# Windows NUL device artifact
+NUL
 
 # Python testing artifacts (functional test environment)
 .venv/
